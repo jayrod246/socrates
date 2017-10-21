@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{53C00A88-0AB6-495E-B31F-542663DC429D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Meyer.Socrates</RootNamespace>
+    <AssemblyName>Meyer.Socrates</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="SlowMember, Version=1.0.3.37167, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SlowMember.1.0.3.37167\lib\net45\SlowMember.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\TriangleUnks.cs" />
+    <Compile Include="IO\BitReader.cs" />
+    <Compile Include="Data\BufferEx.cs" />
+    <Compile Include="Collections\Generic\CollectionBase.cs" />
+    <Compile Include="Collections\ReferenceCollection.cs" />
+    <Compile Include="Collections\ValidationException.cs" />
+    <Compile Include="Data\ActionBehavior.cs" />
+    <Compile Include="Data\ActionCell.cs" />
+    <Compile Include="Data\ActionFrame.cs" />
+    <Compile Include="Data\ActorEvents\ActorEvent.cs" />
+    <Compile Include="Data\ActorEvents\ActorEventTypeAttribute.cs" />
+    <Compile Include="Data\ActorEvents\FreezeAnimationAE.cs" />
+    <Compile Include="Data\ActorEvents\PlacementAE.cs" />
+    <Compile Include="Data\ActorEvents\SetAnimationAE.cs" />
+    <Compile Include="Data\ActorEvents\SetCostumeAE.cs" />
+    <Compile Include="Data\ActorEvents\VirtualActorEvent.cs" />
+    <Compile Include="Data\ActorEventType.cs" />
+    <Compile Include="Data\BinaryOperations.cs" />
+    <Compile Include="Data\Bit.cs" />
+    <Compile Include="Data\BrAngle.cs" />
+    <Compile Include="Data\BrArithmetic.cs" />
+    <Compile Include="Data\BrBounds.cs" />
+    <Compile Include="Data\BrColorRGB.cs" />
+    <Compile Include="Data\BrEuler.cs" />
+    <Compile Include="Data\BrEulerFlags.cs" />
+    <Compile Include="Data\BrLight.cs" />
+    <Compile Include="Data\BrMatrix3x4.cs" />
+    <Compile Include="Data\BrScalar.cs" />
+    <Compile Include="Data\BrVector.cs" />
+    <Compile Include="Data\BrVector2.cs" />
+    <Compile Include="Data\BrVector3.cs" />
+    <Compile Include="Data\BrVector4.cs" />
+    <Compile Include="Data\ChunkyTreeHelper.cs" />
+    <Compile Include="Data\CommonItemHelper.cs" />
+    <Compile Include="Data\Compression.cs" />
+    <Compile Include="Data\CompressionType.cs" />
+    <Compile Include="Data\CostumeDefinition.cs" />
+    <Compile Include="Data\Fraction.cs" />
+    <Compile Include="Data\IBitmapCanvas.cs" />
+    <Compile Include="Data\IChunkIdentifier.cs" />
+    <Compile Include="Data\IIndexed1Image.cs" />
+    <Compile Include="Data\IIndexed8Image.cs" />
+    <Compile Include="Data\IMetadata.cs" />
+    <Compile Include="Data\IResolvable.cs" />
+    <Compile Include="Data\IResolver.cs" />
+    <Compile Include="Data\ISourceReferenced.cs" />
+    <Compile Include="Data\ISourceReferencedEx.cs" />
+    <Compile Include="Data\MetadataDictionary.cs" />
+    <Compile Include="Data\ModeFlags.cs" />
+    <Compile Include="Data\Ms3dmmEncodings.cs" />
+    <Compile Include="Data\ObjectType.cs" />
+    <Compile Include="Data\PathNode.cs" />
+    <Compile Include="Data\PixelFormat.cs" />
+    <Compile Include="Data\ProgressInfo.cs" />
+    <Compile Include="Data\Quad.cs" />
+    <Compile Include="Data\Reference.cs" />
+    <Compile Include="Data\Sections\ACTN.cs" />
+    <Compile Include="Data\Sections\BitmapSection.cs" />
+    <Compile Include="Data\Sections\BMDL.cs" />
+    <Compile Include="Data\Sections\CMTL.cs" />
+    <Compile Include="Data\Sections\FILL.cs" />
+    <Compile Include="Data\Sections\GGAE.cs" />
+    <Compile Include="Data\Sections\GGCL.cs" />
+    <Compile Include="Data\Sections\GGCM.cs" />
+    <Compile Include="Data\Sections\GLBS.cs" />
+    <Compile Include="Data\Sections\GLCR.cs" />
+    <Compile Include="Data\Sections\GLDC.cs" />
+    <Compile Include="Data\Sections\GLLT.cs" />
+    <Compile Include="Data\Sections\GLPI.cs" />
+    <Compile Include="Data\Sections\GLXF.cs" />
+    <Compile Include="Data\Sections\GOKD.cs" />
+    <Compile Include="Data\Sections\HTOP.cs" />
+    <Compile Include="Data\Sections\IndexableSection.cs" />
+    <Compile Include="Data\Sections\MASK.cs" />
+    <Compile Include="Data\Sections\MBMP.cs" />
+    <Compile Include="Data\Sections\MTRL.cs" />
+    <Compile Include="Data\Sections\PATH.cs" />
+    <Compile Include="Data\Sections\Section.cs" />
+    <Compile Include="Data\Sections\SectionKeyAttribute.cs" />
+    <Compile Include="Data\Sections\SharedMBMP.cs" />
+    <Compile Include="Data\Sections\TH.cs" />
+    <Compile Include="Data\Sections\THUM.cs" />
+    <Compile Include="Data\Sections\TMAP.cs" />
+    <Compile Include="Data\Sections\TMPL.cs" />
+    <Compile Include="Data\Sections\TXXF.cs" />
+    <Compile Include="Data\Sections\VirtualSection.cs" />
+    <Compile Include="Data\Sections\ZBMP.cs" />
+    <Compile Include="Data\SocDataObject.cs" />
+    <Compile Include="Data\SocObjectBase.cs" />
+    <Compile Include="Data\SocPropertyAttribute.cs" />
+    <Compile Include="Data\SocPropertyFlags.cs" />
+    <Compile Include="Data\SourceReference.cs" />
+    <Compile Include="Data\SourceReferenceEx.cs" />
+    <Compile Include="Data\Volatile\VolatileCollection.cs" />
+    <Compile Include="Data\Volatile\VolatileObject.cs" />
+    <Compile Include="Collections\ChunkyCollection.cs" />
+    <Compile Include="Data\ChunkIdentifier.cs" />
+    <Compile Include="Data\Chunk.cs" />
+    <Compile Include="Helper\LinqHelper.cs" />
+    <Compile Include="Helper\RegistryHelper.cs" />
+    <Compile Include="IO\BitWriter.cs" />
+    <Compile Include="IO\DataStream.cs" />
+    <Compile Include="IO\IDataReadContext.cs" />
+    <Compile Include="IO\IDataStreamContext.cs" />
+    <Compile Include="IO\IDataWriteContext.cs" />
+    <Compile Include="IO\ISectionReader.cs" />
+    <Compile Include="IO\ISectionWriter.cs" />
+    <Compile Include="IO\Ms3dmmFile.cs" />
+    <Compile Include="IO\ParallelMs3dmmFile.cs" />
+    <Compile Include="Ms3dmm.cs" />
+    <Compile Include="Ms3dmmCollection.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Ms3dmmCollectionResolver.cs" />
+    <Compile Include="Services\ProgressDummy.cs" />
+    <Compile Include="Services\SectionFactory.cs" />
+    <Compile Include="Services\VirtualActorEventRegistry.cs" />
+    <Compile Include="Services\VirtualSectionRegistry.cs" />
+    <Compile Include="Services\ThresholdProgress.cs" />
+    <Compile Include="_generated\SectionFactory.Generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SectionFactory.Generated.tt</DependentUpon>
+    </Compile>
+    <Compile Include="_generated\VirtualActorEventRegistry.Generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VirtualActorEventRegistry.Generated.tt</DependentUpon>
+    </Compile>
+    <Compile Include="_generated\VirtualSectionRegistry.Generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VirtualSectionRegistry.Generated.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="_generated\SectionFactory.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SectionFactory.Generated.cs</LastGenOutput>
+    </Content>
+    <Content Include="_generated\VirtualActorEventRegistry.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>VirtualActorEventRegistry.Generated.cs</LastGenOutput>
+    </Content>
+    <Content Include="_generated\VirtualSectionRegistry.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>VirtualSectionRegistry.Generated.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

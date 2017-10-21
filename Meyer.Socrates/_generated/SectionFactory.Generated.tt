@@ -1,0 +1,76 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="EnvDTE" #>
+<#@ import namespace="EnvDTE" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+/*
+	This code was generated <#= System.DateTime.Now #>
+*/
+using Meyer.Socrates.Data;
+using Meyer.Socrates.Data.Sections;
+
+namespace Meyer.Socrates.Services
+{
+	internal static partial class SectionFactory
+	{
+		internal static Section CreateSection(string key)
+        {
+			switch(key)
+			{
+<#
+	var dte = (this.Host as IServiceProvider).GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
+	var project = dte.Solution.FindProjectItem(this.Host.TemplateFile)
+											 .ContainingProject as EnvDTE.Project;
+
+	foreach(CodeClass c in GetCodeClasses(project.ProjectItems))
+    {
+		var attr = c.Attributes.Cast<CodeAttribute>().FirstOrDefault(a=>a.Name.StartsWith("SectionKey"));
+		if(attr != null)
+        {
+			WriteLine("\t\t\t\tcase {0}: return new {1}();",attr.Value, c.Name);
+        }
+	}
+#>
+				default: return new Section();
+			}
+        }
+	}
+}
+<#+
+  public List<EnvDTE.ProjectItem> GetProjectItemsRecursively(EnvDTE.ProjectItems items)
+  {
+      var ret = new List<EnvDTE.ProjectItem>();
+      if (items == null) return ret;
+      foreach(EnvDTE.ProjectItem item in items)
+      {
+        ret.Add(item);
+        ret.AddRange(GetProjectItemsRecursively(item.ProjectItems));
+      }
+      return ret;
+  }
+#>
+<#+
+  public List<EnvDTE.CodeElement> GetCodeElementsRecursively(EnvDTE.CodeElements items)
+  {
+      var ret = new List<EnvDTE.CodeElement>();
+      if (items == null) return ret;
+      foreach(EnvDTE.CodeElement item in items)
+      {
+		  ret.Add(item);
+      }
+      return ret;
+  }
+#>
+
+<#+
+  public IEnumerable<EnvDTE.CodeClass> GetCodeClasses(EnvDTE.ProjectItems items)
+  {
+      foreach(CodeNamespace ns in GetProjectItemsRecursively(items).Where(p=>p.FileCodeModel!=null).SelectMany(p=>p.FileCodeModel.CodeElements.OfType<CodeNamespace>()))
+      {
+		  foreach(CodeClass codeClass in ns.Children.OfType<CodeClass>())
+			  yield return codeClass;
+      }
+  }
+#>
