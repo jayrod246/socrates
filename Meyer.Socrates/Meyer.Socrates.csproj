@@ -152,8 +152,6 @@
     <Compile Include="IO\IDataReadContext.cs" />
     <Compile Include="IO\IDataStreamContext.cs" />
     <Compile Include="IO\IDataWriteContext.cs" />
-    <Compile Include="IO\ISectionReader.cs" />
-    <Compile Include="IO\ISectionWriter.cs" />
     <Compile Include="IO\Ms3dmmFile.cs" />
     <Compile Include="IO\ParallelMs3dmmFile.cs" />
     <Compile Include="Ms3dmm.cs" />
