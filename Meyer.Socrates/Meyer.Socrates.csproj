@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\ChunkIdentity.cs" />
     <Compile Include="Data\TriangleUnks.cs" />
     <Compile Include="IO\BitReader.cs" />
     <Compile Include="Data\BufferEx.cs" />
@@ -143,7 +144,6 @@
     <Compile Include="Data\Volatile\VolatileCollection.cs" />
     <Compile Include="Data\Volatile\VolatileObject.cs" />
     <Compile Include="Collections\ChunkyCollection.cs" />
-    <Compile Include="Data\ChunkIdentifier.cs" />
     <Compile Include="Data\Chunk.cs" />
     <Compile Include="Helper\LinqHelper.cs" />
     <Compile Include="Helper\RegistryHelper.cs" />
