@@ -12,19 +12,19 @@
     {
         internal ChunkyCollection() : base()
         {
-            lock (Synchronized) dictionary = new Dictionary<ChunkIdentifier, Entry>();
+            lock (Synchronized) dictionary = new Dictionary<ChunkIdentity, Entry>();
         }
 
         internal ChunkyCollection(int capacity) : base(new List<Chunk>(capacity))
         {
-            lock (Synchronized) dictionary = new Dictionary<ChunkIdentifier, Entry>(capacity);
+            lock (Synchronized) dictionary = new Dictionary<ChunkIdentity, Entry>(capacity);
         }
 
         internal ChunkyCollection(IList<Chunk> collection) : base(collection)
         {
             lock (Synchronized)
             {
-                dictionary = new Dictionary<ChunkIdentifier, Entry>(collection.Count);
+                dictionary = new Dictionary<ChunkIdentity, Entry>(collection.Count);
                 foreach (var item in collection)
                 {
                     ValidateItem(item);
@@ -72,7 +72,7 @@
         {
             if (item == null) throw new ValidationException(new ArgumentNullException("item"));
             if (item.container != null) throw new ValidationException("Chunk is already attached.");
-            if (dictionary.TryGetValue(new ChunkIdentifier(item.Quad, item.ID), out var entry) && entry.chunk != null) throw new ValidationException("Chunk with identifier already exists inside collection.");
+            if (dictionary.TryGetValue(new ChunkIdentity(item.Quad, item.ID), out var entry) && entry.chunk != null) throw new ValidationException("Chunk with identifier already exists inside collection.");
             base.ValidateItem(item);
         }
 
@@ -100,7 +100,7 @@
                 item.PropertyChanged -= Chunk_PropertyChanged;
                 item.References.CollectionChanged -= References_CollectionChanged;
             }
-            var key = new ChunkIdentifier(item.Quad, item.ID);
+            var key = new ChunkIdentity(item.Quad, item.ID);
             var entry = dictionary[key];
             if (entry.references_to_this.Count > 0)
             {
@@ -165,8 +165,7 @@
                 reference.PropertyChanged += Reference_PropertyChanged;
             }
 
-            if (!GetOrAddEntry(reference).references_to_this.Add(reference))
-                throw new InvalidOperationException("Failed to attach to reference.");
+            GetOrAddEntry(reference).references_to_this.Add(reference);
         }
 
         private void Reference_PropertyChanging(object sender, System.ComponentModel.PropertyChangingEventArgs e)
@@ -201,7 +200,7 @@
 
         private Entry GetOrAddEntry(IChunkIdentifier identifier)
         {
-            var key = new ChunkIdentifier(identifier.Quad, identifier.ID);
+            var key = identifier.GetChunkIdentity();
             if (!dictionary.TryGetValue(key, out var entry))
                 dictionary[key] = entry = new Entry();
             return entry;
@@ -210,80 +209,14 @@
         private class Entry
         {
             public Chunk chunk;
-            public ISet<Reference> references_to_this = new ReferenceSet();
+            public ICollection<Reference> references_to_this = new ReferenceSet();
 
-            private class ReferenceSet: ISet<Reference>
+            private class ReferenceSet: ICollection<Reference>
             {
                 ISet<Reference> set = new HashSet<Reference>();
                 readonly object Synchronized = new object();
 
-                public bool Add(Reference item)
-                {
-                    lock (Synchronized)
-                        return this.set.Add(item);
-                }
-
-                public void UnionWith(IEnumerable<Reference> other)
-                {
-                    lock (Synchronized)
-                        this.set.UnionWith(other);
-                }
-
-                public void IntersectWith(IEnumerable<Reference> other)
-                {
-                    lock (Synchronized)
-                        this.set.IntersectWith(other);
-                }
-
-                public void ExceptWith(IEnumerable<Reference> other)
-                {
-                    lock (Synchronized)
-                        this.set.ExceptWith(other);
-                }
-
-                public void SymmetricExceptWith(IEnumerable<Reference> other)
-                {
-                    lock (Synchronized)
-                        this.set.SymmetricExceptWith(other);
-                }
-
-                public bool IsSubsetOf(IEnumerable<Reference> other)
-                {
-                    lock (Synchronized)
-                        return this.set.IsSubsetOf(other);
-                }
-
-                public bool IsSupersetOf(IEnumerable<Reference> other)
-                {
-                    lock (Synchronized)
-                        return this.set.IsSupersetOf(other);
-                }
-
-                public bool IsProperSupersetOf(IEnumerable<Reference> other)
-                {
-                    lock (Synchronized)
-                        return this.set.IsProperSupersetOf(other);
-                }
-
-                public bool IsProperSubsetOf(IEnumerable<Reference> other)
-                {
-                    lock (Synchronized)
-                        return this.set.IsProperSubsetOf(other);
-                }
-
-                public bool Overlaps(IEnumerable<Reference> other)
-                {
-                    lock (Synchronized)
-                        return this.set.Overlaps(other);
-                }
-
-                public bool SetEquals(IEnumerable<Reference> other)
-                {
-                    lock (Synchronized)
-                        return this.set.SetEquals(other);
-                }
-
-                void ICollection<Reference>.Add(Reference item)
+                public void Add(Reference item)
                 {
                     lock (Synchronized)
                         this.set.Add(item);
@@ -345,12 +278,11 @@
             }
         }
 
-        private readonly Dictionary<ChunkIdentifier, Entry> dictionary;
+        private readonly Dictionary<ChunkIdentity, Entry> dictionary;
 
         Chunk IResolver<IChunkIdentifier, Chunk>.Resolve(IChunkIdentifier input)
         {
-            var key = new ChunkIdentifier(input.Quad, input.ID);
-            return dictionary.TryGetValue(key, out var entry) ? entry.chunk : null;
+            return dictionary.TryGetValue(input.GetChunkIdentity(), out var entry) ? entry.chunk : null;
         }
     }
 }

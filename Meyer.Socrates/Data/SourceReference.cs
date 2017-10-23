@@ -30,5 +30,10 @@ namespace Meyer.Socrates.Data
         {
             return Resolve(input);
         }
+
+        ChunkIdentity IChunkIdentifier.GetChunkIdentity()
+        {
+            return new ChunkIdentity(Quad, ID);
+        }
     }
 }

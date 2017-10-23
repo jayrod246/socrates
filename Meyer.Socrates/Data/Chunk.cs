@@ -79,5 +79,10 @@
         {
             return Section;
         }
+
+        ChunkIdentity IChunkIdentifier.GetChunkIdentity()
+        {
+            return new ChunkIdentity(Quad, ID);
+        }
     }
 }

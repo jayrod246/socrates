@@ -2,7 +2,6 @@
 {
     public interface IChunkIdentifier
     {
-        Quad Quad { get; }
-        uint ID { get; }
+        ChunkIdentity GetChunkIdentity();
     }
 }

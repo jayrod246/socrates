@@ -92,6 +92,11 @@
             }
         }
 
+        ChunkIdentity IChunkIdentifier.GetChunkIdentity()
+        {
+            return new ChunkIdentity(Quad, ID);
+        }
+
         internal volatile ReferenceCollection container;
 
         private uint id;

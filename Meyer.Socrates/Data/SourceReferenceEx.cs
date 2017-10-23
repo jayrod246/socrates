@@ -56,5 +56,10 @@
         {
             return resolver.Resolve(this);
         }
+
+        ChunkIdentity IChunkIdentifier.GetChunkIdentity()
+        {
+            return new ChunkIdentity(Quad, ID);
+        }
     }
 }

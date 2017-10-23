@@ -51,7 +51,7 @@
         {
             if (item == null) throw new ValidationException(new ArgumentNullException("item"));
             if (item.container != null) throw new ValidationException("Reference is already attached.");
-            if (EqualityComparer<ChunkIdentifier>.Default.Equals(new ChunkIdentifier(item.Quad, item.ID), new ChunkIdentifier(owner.Quad, owner.ID))) throw new ValidationException("Chunk cannot reference self.");
+            if (EqualityComparer<ChunkIdentity>.Default.Equals(new ChunkIdentity(item.Quad, item.ID), new ChunkIdentity(owner.Quad, owner.ID))) throw new ValidationException("Chunk cannot reference self.");
             base.ValidateItem(item);
         }
 
