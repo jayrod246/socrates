@@ -14,6 +14,7 @@
         private const uint KCDC = (uint)CompressionType.KCDC;
         private const uint KCD2 = (uint)CompressionType.KCD2;
         private const int DEFAULT_MaxLookBack = 2048;
+
         /// <summary>
         /// The maximum number of bytes to look back when compressing sections.
         /// </summary>
@@ -132,7 +133,7 @@
                         01011
 
                         Starting from the right side, or LSB (least significant bit):
-                    
+
                         - 2 bits are set before the first 0, therefore:
                           n = 2
 
@@ -145,6 +146,8 @@
                         - Add v1 and v2 together:
                           copyLength = 4
                 */
+
+                n = 0;
                 while (true)
                 {
                     if (bitReader.EndOfStream)
@@ -154,7 +157,6 @@
                     ++n;
                 }
                 copyLength = ((1 << n) - 1) + bitReader.ReadInt32(n);
-                n = 0;
 
                 /*
                    We determine if we should:
@@ -169,10 +171,12 @@
                    1111 -   4 bits
                 */
 
+                n = 0;
                 while (n < 4 && bitReader.ReadBit() == 1) n++; // Count the number of bits set to 1, without exceeding a maximum of 4 bits.
                 switch (n)
                 {
                     case 0:
+                        lookBack = 0;
                         break;
                     case 1:
                         // CopyLength gets increased by 2.
@@ -253,6 +257,7 @@
                    0111 -   4 bits
                    1111 -   4 bits
                 */
+                n = 0;
                 while (true)
                 {
                     if (bitReader.EndOfStream)
@@ -263,6 +268,7 @@
                 switch (n)
                 {
                     case 0:
+                        lookBack = 0;
                         break;
                     case 1:
                         // CopyLength gets increased by 2.
