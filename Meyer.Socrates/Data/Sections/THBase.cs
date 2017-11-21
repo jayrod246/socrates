@@ -6,7 +6,7 @@
     /// <summary>
     /// The base class for TH-suffixed chunks. This class is abstract.
     /// </summary>
-    public abstract class TH: VirtualSection, ISourceReferenced
+    public abstract class THBase: VirtualSection, ISourceReferenced
     {
         internal abstract Quad DefaultQuad { get; }
 
@@ -25,16 +25,16 @@
         /// <summary>
         /// Prevent externals from inheriting.
         /// </summary>
-        internal TH()
+        internal THBase()
         {
         }
 
-        public TH(uint sourceID)
+        public THBase(uint sourceID)
         {
             SourceReference = new SourceReference() { Quad = DefaultQuad, ID = sourceID };
         }
 
-        public TH(Quad sourceQuad, uint sourceID)
+        public THBase(Quad sourceQuad, uint sourceID)
         {
             SourceReference = new SourceReference() { Quad = sourceQuad, ID = sourceID };
         }
@@ -58,7 +58,7 @@
     }
 
     [SectionKey("SMTH")]
-    public sealed class SMTH: TH
+    public sealed class SMTH: THBase
     {
         public SMTH(uint sourceID) : base(sourceID)
         {
@@ -76,7 +76,7 @@
     }
 
     [SectionKey("SVTH")]
-    public sealed class SVTH: TH
+    public sealed class SVTH: THBase
     {
         public SVTH(uint sourceID) : base(sourceID)
         {
@@ -94,7 +94,7 @@
     }
 
     [SectionKey("SFTH")]
-    public sealed class SFTH: TH
+    public sealed class SFTH: THBase
     {
         public SFTH(uint sourceID) : base(sourceID)
         {
@@ -112,7 +112,7 @@
     }
 
     [SectionKey("BKTH")]
-    public sealed class BKTH: TH
+    public sealed class BKTH: THBase
     {
         public BKTH(uint sourceID) : base(sourceID)
         {
@@ -130,7 +130,7 @@
     }
 
     [SectionKey("CATH")]
-    public sealed class CATH: TH
+    public sealed class CATH: THBase
     {
         public CATH(uint sourceID) : base(sourceID)
         {
@@ -148,7 +148,7 @@
     }
 
     [SectionKey("MTTH")]
-    public sealed class MTTH: TH
+    public sealed class MTTH: THBase
     {
         public MTTH(uint sourceID) : base(sourceID)
         {
@@ -166,7 +166,7 @@
     }
 
     [SectionKey("PRTH")]
-    public sealed class PRTH: TH
+    public sealed class PRTH: THBase
     {
         public PRTH(uint sourceID) : base(sourceID)
         {
@@ -184,7 +184,7 @@
     }
 
     [SectionKey("TMTH")]
-    public sealed class TMTH: TH
+    public sealed class TMTH: THBase
     {
         public TMTH(uint sourceID) : base(sourceID)
         {
@@ -202,7 +202,7 @@
     }
 
     [SectionKey("TCTH")]
-    public sealed class TCTH: TH
+    public sealed class TCTH: THBase
     {
         public TCTH(uint sourceID) : base(sourceID)
         {
@@ -220,7 +220,7 @@
     }
 
     [SectionKey("TBTH")]
-    public sealed class TBTH: TH
+    public sealed class TBTH: THBase
     {
         public TBTH(uint sourceID) : base(sourceID)
         {
@@ -238,7 +238,7 @@
     }
 
     [SectionKey("TZTH")]
-    public sealed class TZTH: TH
+    public sealed class TZTH: THBase
     {
         public TZTH(uint sourceID) : base(sourceID)
         {
@@ -256,7 +256,7 @@
     }
 
     [SectionKey("TSTH")]
-    public sealed class TSTH: TH
+    public sealed class TSTH: THBase
     {
         public TSTH(uint sourceID) : base(sourceID)
         {
@@ -274,7 +274,7 @@
     }
 
     [SectionKey("TFTH")]
-    public sealed class TFTH: TH
+    public sealed class TFTH: THBase
     {
         public TFTH(uint sourceID) : base(sourceID)
         {
