@@ -18,6 +18,17 @@ namespace Meyer.Socrates.Data
                                 left.M30 * right.M00 + left.M31 * right.M10 + left.M32 * right.M20 + right.M30, left.M30 * right.M01 + left.M31 * right.M11 + left.M32 * right.M21 + right.M31, left.M30 * right.M02 + left.M31 * right.M12 + left.M32 * right.M22 + right.M32);
         }
     }
+
+    // Matrix2x3
+    public partial struct BrMatrix2x3
+    {
+        public static BrMatrix2x3 Multiply(BrMatrix2x3 left, BrMatrix2x3 right)
+        {
+            return new BrMatrix2x3(left.M00 * right.M00 + left.M01 * right.M10, left.M00 * right.M01 + left.M01 * right.M11,
+                                left.M10 * right.M00 + left.M11 * right.M10, left.M10 * right.M01 + left.M11 * right.M11,
+                                left.M20 * right.M00 + left.M21 * right.M10 + right.M20, left.M20 * right.M01 + left.M21 * right.M11 + right.M21);
+        }
+    }
     #endregion
 
     #region Scalar
