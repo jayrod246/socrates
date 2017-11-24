@@ -21,12 +21,12 @@
         internal int m20;
         internal int m21;
 
-        public BrScalar M00 { get => new BrScalar(m00); set => m00 = value.RawValue; }
-        public BrScalar M01 { get => new BrScalar(m01); set => m01 = value.RawValue; }
-        public BrScalar M10 { get => new BrScalar(m10); set => m10 = value.RawValue; }
-        public BrScalar M11 { get => new BrScalar(m11); set => m11 = value.RawValue; }
-        public BrScalar M20 { get => new BrScalar(m20); set => m20 = value.RawValue; }
-        public BrScalar M21 { get => new BrScalar(m21); set => m21 = value.RawValue; }
+        public BrScalar M00 { get => BrScalar.FromRaw(m00); set => m00 = value.RawValue; }
+        public BrScalar M01 { get => BrScalar.FromRaw(m01); set => m01 = value.RawValue; }
+        public BrScalar M10 { get => BrScalar.FromRaw(m10); set => m10 = value.RawValue; }
+        public BrScalar M11 { get => BrScalar.FromRaw(m11); set => m11 = value.RawValue; }
+        public BrScalar M20 { get => BrScalar.FromRaw(m20); set => m20 = value.RawValue; }
+        public BrScalar M21 { get => BrScalar.FromRaw(m21); set => m21 = value.RawValue; }
 
         public BrMatrix2x3(BrScalar m00, BrScalar m01, BrScalar m10, BrScalar m11, BrScalar m20, BrScalar m21)
         {
@@ -56,7 +56,49 @@
                 if (row < 0 || row >= HEIGHT)
                     throw new ArgumentOutOfRangeException("row");
 
-                typeof(BrMatrix3x4).GetField($"m{row}{column}").SetValue(this, value.RawValue);
+                var vec = GetColumn(column);
+                vec[row] = value;
+                SetColumn(column, vec);
+            }
+        }
+
+        public void SetColumn(int index, BrVector3 value)
+        {
+            switch (index)
+            {
+                case 0:
+                    m00 = value.v0;
+                    m10 = value.v1;
+                    m20 = value.v2;
+                    break;
+                case 1:
+                    m01 = value.v0;
+                    m11 = value.v1;
+                    m21 = value.v2;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("index");
+            }
+        }
+
+        public void SetRow(int index, BrVector2 value)
+        {
+            switch (index)
+            {
+                case 0:
+                    m00 = value.v0;
+                    m01 = value.v1;
+                    break;
+                case 1:
+                    m10 = value.v0;
+                    m11 = value.v1;
+                    break;
+                case 2:
+                    m20 = value.v0;
+                    m21 = value.v1;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("index");
             }
         }
 
@@ -65,9 +107,9 @@
             switch (index)
             {
                 case 0:
-                    return new BrVector3(m00, m10, m20);
+                    return BrVector3.FromRaw(m00, m10, m20);
                 case 1:
-                    return new BrVector3(m01, m11, m21);
+                    return BrVector3.FromRaw(m01, m11, m21);
                 default:
                     throw new ArgumentOutOfRangeException("index");
             }
@@ -78,11 +120,11 @@
             switch (index)
             {
                 case 0:
-                    return new BrVector2(m00, m01);
+                    return BrVector2.FromRaw(m00, m01);
                 case 1:
-                    return new BrVector2(m10, m11);
+                    return BrVector2.FromRaw(m10, m11);
                 case 2:
-                    return new BrVector2(m20, m21);
+                    return BrVector2.FromRaw(m20, m21);
                 default:
                     throw new ArgumentOutOfRangeException("index");
             }

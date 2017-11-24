@@ -12,10 +12,9 @@ namespace Meyer.Socrates.Data
         internal int v0;
         internal int v1;
 
-        public BrVector2(int rawX, int rawY)
+        public static BrVector2 FromRaw(int rawX, int rawY)
         {
-            v0 = rawX;
-            v1 = rawY;
+            return new BrVector2(BrScalar.FromRaw(rawX), BrScalar.FromRaw(rawY));
         }
 
         public BrVector2(BrScalar x, BrScalar y)
@@ -28,9 +27,9 @@ namespace Meyer.Socrates.Data
 
         public int RawY { get => v1; set => v1 = value; }
 
-        public BrScalar X { get => new BrScalar(v0); set => v0 = value.RawValue; }
+        public BrScalar X { get => BrScalar.FromRaw(v0); set => v0 = value.RawValue; }
 
-        public BrScalar Y { get => new BrScalar(v1); set => v1 = value.RawValue; }
+        public BrScalar Y { get => BrScalar.FromRaw(v1); set => v1 = value.RawValue; }
 
         public BrScalar this[int index]
         {
@@ -39,9 +38,9 @@ namespace Meyer.Socrates.Data
                 switch (index)
                 {
                     case 0:
-                        return new BrScalar(v0);
+                        return BrScalar.FromRaw(v0);
                     case 1:
-                        return new BrScalar(v1);
+                        return BrScalar.FromRaw(v1);
                     default:
                         throw new ArgumentOutOfRangeException("index");
                 }

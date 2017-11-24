@@ -4,17 +4,17 @@ namespace Meyer.Socrates.Data
 {
     public partial struct BrScalar
     {
-        public static readonly BrScalar Epsilon = new BrScalar(0x0001);
-        public static readonly BrScalar MaxValue = new BrScalar(int.MaxValue);
-        public static readonly BrScalar MinValue = new BrScalar(int.MinValue);
+        public static readonly BrScalar Epsilon = FromRaw(0x0001);
+        public static readonly BrScalar MaxValue = FromRaw(int.MaxValue);
+        public static readonly BrScalar MinValue = FromRaw(int.MinValue);
         public static readonly BrScalar PI = 3.14159265358979323846f;
 
         public int RawValue { get; set; }
         public float AsSingle() => RawValue / 65536f;
 
-        internal BrScalar(int raw)
+        public static BrScalar FromRaw(int rawValue)
         {
-            RawValue = raw;
+            return new BrScalar() { RawValue = rawValue };
         }
 
         public BrScalar(float value)
@@ -90,9 +90,13 @@ namespace Meyer.Socrates.Data
         {
             return Multiply(a, b);
         }
+        public static BrScalar operator /(BrScalar a, BrScalar b)
+        {
+            return Divide(a, b);
+        }
         public static bool operator <(BrScalar a, BrScalar b) => a.RawValue < b.RawValue;
         public static bool operator >(BrScalar a, BrScalar b) => a.RawValue > b.RawValue;
-        public static BrScalar operator +(BrScalar a, BrScalar b) => new BrScalar(a.RawValue + b.RawValue);
-        public static BrScalar operator -(BrScalar a, BrScalar b) => new BrScalar(a.RawValue - b.RawValue);
+        public static BrScalar operator +(BrScalar a, BrScalar b) => FromRaw(a.RawValue + b.RawValue);
+        public static BrScalar operator -(BrScalar a, BrScalar b) => FromRaw(a.RawValue - b.RawValue);
     }
 }

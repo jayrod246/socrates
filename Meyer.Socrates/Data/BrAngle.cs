@@ -5,15 +5,10 @@ namespace Meyer.Socrates.Data
     public struct BrAngle
     {
         public const int Size = 2;
-        public static readonly BrAngle MaxValue = new BrAngle(ushort.MaxValue);
-        public static readonly BrAngle MinValue = new BrAngle(ushort.MinValue);
+        public static readonly BrAngle MaxValue = FromRaw(ushort.MaxValue);
+        public static readonly BrAngle MinValue = FromRaw(ushort.MinValue);
 
         public ushort RawValue { get; set; }
-
-        internal BrAngle(ushort raw)
-        {
-            RawValue = raw;
-        }
 
         public BrAngle(float value)
         {
@@ -28,7 +23,12 @@ namespace Meyer.Socrates.Data
             }
         }
 
-        public float AsSingle() => new BrScalar(RawValue) * 360f;
+        public float AsSingle(bool radians = false) => radians ? (BrScalar.PI / 180f) * BrScalar.FromRaw(RawValue) * 360f : BrScalar.FromRaw(RawValue) * 360f;
+
+        public static BrAngle FromRaw(ushort rawValue)
+        {
+            return new BrAngle() { RawValue = rawValue };
+        }
 
         public static BrAngle FromDegrees(float deg)
         {
@@ -38,6 +38,16 @@ namespace Meyer.Socrates.Data
         public static BrAngle FromRadians(float deg)
         {
             return new BrAngle((BrScalar.PI / 180f) * deg);
+        }
+
+        public static implicit operator float(BrAngle x)
+        {
+            return x.AsSingle();
+        }
+
+        public static implicit operator BrAngle(float x)
+        {
+            return FromDegrees(x);
         }
     }
 }

@@ -10,12 +10,9 @@ namespace Meyer.Socrates.Data
         internal int v2;
         internal int v3;
 
-        public BrVector4(int rawX, int rawY, int rawZ, int rawW)
+        public static BrVector4 FromRaw(int rawX, int rawY, int rawZ, int rawW)
         {
-            v0 = rawX;
-            v1 = rawY;
-            v2 = rawZ;
-            v3 = rawW;
+            return new BrVector4(BrScalar.FromRaw(rawX), BrScalar.FromRaw(rawY), BrScalar.FromRaw(rawZ), BrScalar.FromRaw(rawW));
         }
 
         public BrVector4(BrScalar x, BrScalar y, BrScalar z, BrScalar w)
@@ -28,25 +25,25 @@ namespace Meyer.Socrates.Data
 
         public BrScalar X
         {
-            get => new BrScalar(v0);
+            get => BrScalar.FromRaw(v0);
             set => v0 = value.RawValue;
         }
 
         public BrScalar Y
         {
-            get => new BrScalar(v1);
+            get => BrScalar.FromRaw(v1);
             set => v1 = value.RawValue;
         }
 
         public BrScalar Z
         {
-            get => new BrScalar(v2);
+            get => BrScalar.FromRaw(v2);
             set => v2 = value.RawValue;
         }
 
         public BrScalar W
         {
-            get => new BrScalar(v3);
+            get => BrScalar.FromRaw(v3);
             set => v3 = value.RawValue;
         }
 
@@ -57,13 +54,13 @@ namespace Meyer.Socrates.Data
                 switch (index)
                 {
                     case 0:
-                        return new BrScalar(v0);
+                        return BrScalar.FromRaw(v0);
                     case 1:
-                        return new BrScalar(v1);
+                        return BrScalar.FromRaw(v1);
                     case 2:
-                        return new BrScalar(v2);
+                        return BrScalar.FromRaw(v2);
                     case 3:
-                        return new BrScalar(v3);
+                        return BrScalar.FromRaw(v3);
                     default:
                         throw new ArgumentOutOfRangeException("index");
                 }
