@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Meyer.Socrates.Data
+﻿namespace Meyer.Socrates.Data
 {
     #region Matrices
     // Matrix3x4
@@ -37,6 +31,11 @@ namespace Meyer.Socrates.Data
         public static BrScalar Multiply(BrScalar a, BrScalar b)
         {
             return new BrScalar(a.AsSingle() * b.AsSingle());
+        }
+
+        public static BrScalar Divide(BrScalar a, BrScalar b)
+        {
+            return new BrScalar(a.AsSingle() / b.AsSingle());
         }
     }
     #endregion
