@@ -52,7 +52,7 @@
             return true;
         }
 
-        private void EnsureCanWrite()
+        protected void EnsureCanWrite()
         {
             if (!isLoading && isReadOnly) throw new NotSupportedException("The SocDataObject is in a read-only state.");
         }
@@ -79,6 +79,14 @@
         {
             using (Lock())
             {
+                return SetValueWithoutLock(ref field, value, propertyName);
+            }
+        }
+
+        protected bool SetValueWithoutLock<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            lock (Synchronized)
+            {
                 EnsureCanWrite();
                 if (EqualityComparer<T>.Default.Equals(field, value)) return false;
                 var propertyFlags = GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public).GetCustomAttribute<SocPropertyAttribute>()?.PropertyFlags ?? default(SocPropertyFlags);
@@ -101,6 +109,14 @@
         protected override T GetValue<T>(ref T field, [CallerMemberName] string propertyName = null)
         {
             using (Lock())
+            {
+                return field;
+            }
+        }
+
+        protected T GetValueWithoutLock<T>(ref T field, [CallerMemberName] string propertyName = null)
+        {
+            lock (Synchronized)
             {
                 return field;
             }
@@ -203,7 +219,7 @@
         }
 
         private bool isReadOnly;
-        private bool isLoading;
+        internal bool isLoading;
         internal byte[] cache;
 
         private class LockHelper: IDisposable

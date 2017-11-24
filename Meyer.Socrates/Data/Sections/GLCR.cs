@@ -13,15 +13,27 @@
 
         public BrColorRGB this[int index]
         {
-            get => RequireLoad(() => colors[index]);
-            set => RequireLoad(() => colors[index] = value);
+            get
+            {
+                using (Lock())
+                {
+                    return colors[index];
+                }
+            }
+            set
+            {
+                using (Lock())
+                {
+                    colors[index] = value;
+                }
+            }
         }
 
         public bool IsPartial { get => GetValue<bool>(); set => SetValue(value); }
 
         public IEnumerator<BrColorRGB> GetEnumerator()
         {
-            return RequireLoad(() => ((IEnumerable<BrColorRGB>)colors).GetEnumerator());
+            using (Lock()) return ((IEnumerable<BrColorRGB>)colors).GetEnumerator();
         }
 
         protected override void Read(IDataReadContext c)
@@ -29,7 +41,7 @@
             if (c.Length != 1036 && c.Length != 956)
                 throw new InvalidDataException();
 
-            MagicNumber = c.AssertAny(Ms3dmm.MAGIC_NUM_US, Ms3dmm.MAGIC_NUM_JP);
+            MagicNumber = c.Read<uint>();
 
             if (c.Read<Int32>() != 4)
                 throw new InvalidDataException();
@@ -89,7 +101,7 @@
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return RequireLoad(() => ((IEnumerable<BrColorRGB>)colors).GetEnumerator());
+            using (Lock()) return ((IEnumerable<BrColorRGB>)colors).GetEnumerator();
         }
     }
 }

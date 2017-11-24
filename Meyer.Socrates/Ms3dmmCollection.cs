@@ -200,6 +200,8 @@
 
         public IEnumerable<Section> Sections => files.SelectMany(f => f.Sections);
 
+        public IEnumerable<Ms3dmmFile> Files => files;
+
         public IEnumerator<Chunk> GetEnumerator()
         {
             return files.SelectMany(f => f).GetEnumerator();

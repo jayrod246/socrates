@@ -12,7 +12,7 @@ namespace Meyer.Socrates.Data.Sections
         public UInt32 CMTLRefID { get => GetValue<UInt32>(); set => SetValue(value); }
         protected override void Read(IDataReadContext c)
         {
-            MagicNumber = c.AssertAny(Ms3dmm.MAGIC_NUM_US, Ms3dmm.MAGIC_NUM_JP);
+            MagicNumber = c.Read<uint>();
             c.Assert(4);
             c.Assert(1);
             CMTLRefID = c.Read<UInt32>();

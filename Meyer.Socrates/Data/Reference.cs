@@ -24,7 +24,7 @@
         }
     }
 
-    public class Reference: VolatileObject, IChunkIdentifier, IResolvable, IResolvable<Chunk>, IResolvable<Section>
+    public class Reference: VolatileObject, IChunkIdentifier, IResolvable<Chunk>, IResolvable<Section>, ICloneable
     {
         public uint ID { get => GetValue(ref id); set => SetValue(ref id, value); }
         public uint ReferenceID { get => GetValue(ref reference_id); set => SetValue(ref reference_id, value); }
@@ -38,7 +38,7 @@
 
         Section IResolvable<Section>.Resolve()
         {
-            return ResolveSection();
+            return Resolve()?.Section;
         }
 
         internal Chunk Resolve(IResolver<IChunkIdentifier, Chunk> resolver)
@@ -46,16 +46,19 @@
             return resolver.Resolve(this);
         }
 
-        internal Section ResolveSection()
+        public Reference Clone()
         {
-            return Resolve()?.Section;
+            return new Reference()
+            {
+                Quad = Quad,
+                ID = ID,
+                ReferenceID = ReferenceID
+            };
         }
 
-        public T Resolve<T>()
+        object ICloneable.Clone()
         {
-            if (typeof(Section).IsAssignableFrom(typeof(T))) return (T)(object)ResolveSection();
-            if (typeof(T) == typeof(Chunk)) return (T)(object)Resolve();
-            throw new NotSupportedException();
+            return Clone();
         }
 
         public ReadOnlyReference AsReadOnly()

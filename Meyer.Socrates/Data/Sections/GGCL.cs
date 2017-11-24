@@ -2,17 +2,16 @@
 {
     using Meyer.Socrates.IO;
     using System;
-    using System.Collections.Generic;
     using System.IO;
 
     [SectionKey("GGCL")]
     public sealed class GGCL: IndexableSection<ActionFrame>
     {
-        protected override void Read(IDataReadContext c, IList<ActionFrame> items)
+        protected override void Read(IDataReadContext c)
         {
             if (c.Length < 20)
                 throw new InvalidDataException("GGCL section is too small");
-            MagicNumber = c.AssertAny(Ms3dmm.MAGIC_NUM_US, Ms3dmm.MAGIC_NUM_JP);
+            MagicNumber = c.Read<uint>();
             var frameCount = c.Read<UInt32>();
             var offsetDirectory = c.Read<UInt32>() + 20;
             c.Assert(0xFFFFFFFF);
@@ -34,26 +33,26 @@
                     Cells = c.ReadArray<ActionCell>((int)(len / 4))
                 };
 
-                items.Add(frameData);
+                Add(frameData);
             }
         }
 
-        protected override void Write(IDataWriteContext c, IList<ActionFrame> items)
+        protected override void Write(IDataWriteContext c)
         {
             c.WriteArray(new byte[20]);
             var offsets = new uint[Count];
             var lengths = new uint[Count];
 
             // Write data sections
-            for (int i = 0;i < items.Count;i++)
+            for (int i = 0;i < Count;i++)
             {
                 offsets[i] = (uint)c.Position;
                 c.Write(0);
-                c.Write(items[i].PathUnits);
-                for (int j = 0;j < items[i].Cells.Length;j++)
+                c.Write(this[i].PathUnits);
+                for (int j = 0;j < this[i].Cells.Length;j++)
                 {
-                    c.Write(items[i].Cells[j].BMDL);
-                    c.Write(items[i].Cells[j].TransformIndex);
+                    c.Write(this[i].Cells[j].BMDL);
+                    c.Write(this[i].Cells[j].TransformIndex);
                 }
                 lengths[i] = (uint)c.Position - offsets[i];
             }
@@ -69,7 +68,7 @@
 
             c.Position = 0;
             c.Write(MagicNumber);
-            c.Write((uint)items.Count);
+            c.Write((uint)Count);
             c.Write(toplen);
             c.Write(0xFFFFFFFF);
             c.Write(8);

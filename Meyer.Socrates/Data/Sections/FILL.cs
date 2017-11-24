@@ -38,7 +38,7 @@
 
         protected override void Read(IDataReadContext c)
         {
-            MagicNumber = c.AssertAny(Ms3dmm.MAGIC_NUM_US, Ms3dmm.MAGIC_NUM_JP);
+            MagicNumber = c.Read<uint>();
             X1 = c.Read<Int32>();
             Y1 = c.Read<Int32>();
             X2 = c.Read<Int32>();

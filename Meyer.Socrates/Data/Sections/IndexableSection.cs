@@ -1,6 +1,5 @@
 ﻿namespace Meyer.Socrates.Data.Sections
 {
-    using Meyer.Socrates.IO;
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -8,23 +7,41 @@
 
     public abstract class IndexableSection<T>: VirtualSection, IList<T>
     {
-        List<T> items = new List<T>();
-
         public int Count
         {
-            get => RequireLoad(() => this.items.Count);
+            get
+            {
+                using (Lock())
+                {
+                    return this.items.Count;
+                }
+            }
         }
 
         public T this[int index]
         {
-            get => RequireLoad(() => this.items[index]);
+            get
+            {
+                using (Lock())
+                {
+                    return this.items[index];
+                }
+            }
             set
             {
                 using (Lock(true))
                 {
-                    SetItem(index, value);
+                    SetItemWrapper(index, value);
                 }
             }
+        }
+
+        private void SetItemWrapper(int index, T item)
+        {
+            if (isReading)
+                stagedActions.Add(i => SetItem(index - i, item));
+            else
+                SetItem(index, item);
         }
 
         protected virtual void SetItem(int index, T item)
@@ -39,10 +56,26 @@
             ClearCache();
         }
 
+        private void InsertItemWrapper(int index, T item)
+        {
+            if (isReading)
+                stagedActions.Add(i => InsertItem(index - i, item));
+            else
+                InsertItem(index, item);
+        }
+
         protected virtual void InsertItem(int index, T item)
         {
             this.items.Insert(index, item);
             if (item is INotifyPropertyChanged) ((INotifyPropertyChanged)item).PropertyChanged += OnItemPropertyChanged;
+        }
+
+        private void RemoveItemWrapper(int index, T item)
+        {
+            if (isReading)
+                stagedActions.Add(i => RemoveItem(index - i, item));
+            else
+                RemoveItem(index, item);
         }
 
         protected virtual void RemoveItem(int index, T item)
@@ -51,28 +84,37 @@
             if (item is INotifyPropertyChanged) ((INotifyPropertyChanged)item).PropertyChanged -= OnItemPropertyChanged;
         }
 
-        protected override void Read(IDataReadContext c)
+        internal override void EnsureLoadedInternal()
         {
-            var items = new List<T>();
-            Read(c, items);
-            Clear();
-            AddRange(items);
-        }
+            isReading = !isLoaded && cache != null;
+            try
+            {
+                if (isReading)
+                    stagedActions.Clear();
 
-        protected override void Write(IDataWriteContext c)
-        {
-            Write(c, this.items.AsReadOnly());
-        }
+                base.EnsureLoadedInternal();
 
-        protected abstract void Read(IDataReadContext c, IList<T> items);
-        protected abstract void Write(IDataWriteContext c, IList<T> items);
+                if (isReading)
+                {
+                    isReading = false;
+                    var oldLength = items.Count;
+                    Clear();
+                    foreach (var action in stagedActions)
+                        action.Invoke(oldLength);
+                }
+            }
+            finally
+            {
+                isReading = false;
+            }
+        }
 
         public void AddRange(IEnumerable<T> collection)
         {
             using (Lock(true))
             {
                 foreach (var item in collection)
-                    InsertItem(this.items.Count, item);
+                    InsertItemWrapper(this.items.Count, item);
             }
         }
 
@@ -84,7 +126,7 @@
 
                 foreach (var item in collection)
                 {
-                    InsertItem(index, item);
+                    InsertItemWrapper(index, item);
 
                     if (cnt < this.items.Count)
                         index++;
@@ -94,14 +136,17 @@
 
         public int IndexOf(T item)
         {
-            return RequireLoad(() => this.items.IndexOf(item));
+            using (Lock())
+            {
+                return this.items.IndexOf(item);
+            }
         }
 
         public void Insert(int index, T item)
         {
             using (Lock(true))
             {
-                InsertItem(index, item);
+                InsertItemWrapper(index, item);
             }
         }
 
@@ -112,7 +157,7 @@
                 if (index < 0 || index >= this.items.Count)
                     throw new ArgumentOutOfRangeException("index");
 
-                RemoveItem(index, this.items[index]);
+                RemoveItemWrapper(index, this.items[index]);
                 ClearCache();
             }
         }
@@ -121,27 +166,35 @@
         {
             using (Lock(true))
             {
-                InsertItem(this.items.Count, item);
+                InsertItemWrapper(this.items.Count, item);
             }
         }
 
         public void Clear()
         {
-            using (Lock(true))
+            using (Lock())
             {
+                bool clearCache = items.Count > 0;
                 for (int i = this.items.Count - 1;i >= 0;i--)
-                    RemoveItem(i, this.items[i]);
+                    RemoveItemWrapper(i, this.items[i]);
+                if (clearCache) ClearCache();
             }
         }
 
         public bool Contains(T item)
         {
-            return RequireLoad(() => this.items.Contains(item));
+            using (Lock())
+            {
+                return this.items.Contains(item);
+            }
         }
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            RequireLoad(() => this.items.CopyTo(array, arrayIndex));
+            using (Lock())
+            {
+                this.items.CopyTo(array, arrayIndex);
+            }
         }
 
         public bool Remove(T item)
@@ -152,7 +205,7 @@
 
                 if ((index = this.items.IndexOf(item)) >= 0)
                 {
-                    RemoveItem(index, item);
+                    RemoveItemWrapper(index, item);
                     ClearCache();
                     return true;
                 }
@@ -163,12 +216,22 @@
 
         public IEnumerator<T> GetEnumerator()
         {
-            return RequireLoad(() => this.items.GetEnumerator());
+            using (Lock())
+            {
+                return this.items.GetEnumerator();
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return RequireLoad(() => this.items.GetEnumerator());
+            using (Lock())
+            {
+                return this.items.GetEnumerator();
+            }
         }
+
+        private IList<T> items = new List<T>();
+        private IList<Action<int>> stagedActions = new List<Action<int>>();
+        private bool isReading;
     }
 }

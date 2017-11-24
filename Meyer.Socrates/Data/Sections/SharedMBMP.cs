@@ -22,8 +22,20 @@
 
         public byte this[int x, int y]
         {
-            get => RequireLoad(() => (byte)GetPixelCore(x, y));
-            set => RequireLoad(() => SetPixelCore(x, y, value));
+            get
+            {
+                using (Lock())
+                {
+                    return (byte)GetPixelCore(x, y);
+                }
+            }
+            set
+            {
+                using (Lock())
+                {
+                    SetPixelCore(x, y, value);
+                }
+            }
         }
 
         internal bool IsTHUM { get; }
@@ -31,17 +43,17 @@
 
         public void SetPixel(int x, int y, byte value)
         {
-            RequireLoad(() => SetPixelCore(x, y, value));
+            using (Lock()) SetPixelCore(x, y, value);
         }
 
         public void Clear(byte fill)
         {
-            RequireLoad(() => ClearCore(fill));
+            using (Lock()) ClearCore(fill);
         }
 
         protected sealed override void Read(IDataReadContext c)
         {
-            MagicNumber = c.AssertAny(Ms3dmm.MAGIC_NUM_US, Ms3dmm.MAGIC_NUM_JP);
+            MagicNumber = c.Read<uint>();
 
             if (c.Read<Int32>() != 0)
                 throw new InvalidDataException("Invalid MBMP header.");

@@ -3,15 +3,33 @@
     using Meyer.Socrates.Services;
     using System;
     using System.ComponentModel;
+    using System.IO;
 
     public class Section: SocDataObject<Chunk>, INotifyPropertyChanging, INotifyPropertyChanged, IResolvable<Chunk>, ICloneable
     {
         [SocProperty(SocPropertyFlags.KeepCache)]
-        public CompressionType CompressionType { get => GetValue<CompressionType>(); }
+        public CompressionType CompressionType { get => GetValueWithoutLock(ref this.compressionType); }
+
+        public VersionInfo VersionInfo
+        {
+            get => GetValue(ref versionInfo) ?? (VersionInfo = VersionInfo.English);
+            set => SetValue(ref versionInfo, value);
+        }
+
+        protected uint MagicNumber
+        {
+            get => VersionInfo.MagicNumber;
+            set
+            {
+                if (!VersionInfo.TryGetVersionInfo(value, out var versionInfo))
+                    throw new ArgumentException("Bad magic number", "value");
+                VersionInfo = versionInfo;
+            }
+        }
 
         internal void SetCompressionTypeInternal(CompressionType compressionType)
         {
-            SetValue(compressionType, nameof(CompressionType));
+            SetValueWithoutLock(ref this.compressionType, compressionType, nameof(CompressionType));
         }
 
         internal Section()
@@ -26,9 +44,17 @@
             if (propertyName == nameof(Data))
             {
                 var buffer = (byte[])newValue;
-                if (buffer == null) SetCompressionTypeInternal(CompressionType.Uncompressed);
+                if (buffer == null || buffer.Length == 0) SetCompressionTypeInternal(CompressionType.Uncompressed);
                 else SetCompressionTypeInternal(Compression.GetCompressionType(buffer));
             }
+        }
+
+        public static T FromFile<T>(string fileName) where T : VirtualSection
+        {
+            if (!File.Exists(fileName)) throw new FileNotFoundException("File does not exist.", fileName);
+            var section = Activator.CreateInstance<T>();
+            section.Data = File.ReadAllBytes(fileName);
+            return section;
         }
 
         protected override void OnPropertyChanging(string propertyName, object currentValue, object newValue)
@@ -64,5 +90,7 @@
 
         public event PropertyChangingEventHandler PropertyChanging;
         public event PropertyChangedEventHandler PropertyChanged;
+        private VersionInfo versionInfo;
+        private CompressionType compressionType;
     }
 }

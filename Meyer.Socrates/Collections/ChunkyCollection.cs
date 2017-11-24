@@ -206,6 +206,14 @@
             return entry;
         }
 
+        internal IReadOnlyCollection<ReadOnlyReference> GetReferencesTo(IChunkIdentifier identifier)
+        {
+            var key = identifier.GetChunkIdentity();
+            if (dictionary.TryGetValue(key, out var entry))
+                return entry.references_to_this.Select(r => r.AsReadOnly()).ToArray();
+            return Array.Empty<ReadOnlyReference>();
+        }
+
         private class Entry
         {
             public Chunk chunk;

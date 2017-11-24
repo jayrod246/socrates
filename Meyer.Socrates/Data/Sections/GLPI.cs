@@ -2,7 +2,6 @@
 {
     using Meyer.Socrates.IO;
     using System;
-    using System.Collections.Generic;
 
     [SectionKey("GLPI")]
     public sealed class GLPI: IndexableSection<int>
@@ -25,22 +24,22 @@
             base.InsertItem(index, item);
         }
 
-        protected override void Read(IDataReadContext c, IList<int> items)
+        protected override void Read(IDataReadContext c)
         {
-            MagicNumber = c.AssertAny(Ms3dmm.MAGIC_NUM_US, Ms3dmm.MAGIC_NUM_JP);
+            MagicNumber = c.Read<uint>();
             c.Assert<UInt32>(2);
             var count = c.Read<UInt32>();
             for (int i = 0;i < count;i++)
-                items.Add(c.Read<Int16>());
+                Add(c.Read<Int16>());
         }
 
-        protected override void Write(IDataWriteContext c, IList<int> items)
+        protected override void Write(IDataWriteContext c)
         {
             c.Write(MagicNumber);
             c.Write<UInt32>(2);
-            c.Write((UInt32)items.Count);
-            for (int i = 0;i < items.Count;i++)
-                c.Write((Int16)items[i]);
+            c.Write((UInt32)Count);
+            for (int i = 0;i < Count;i++)
+                c.Write((Int16)this[i]);
         }
 
         public int GetParentIndex(int bodyPart)

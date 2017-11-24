@@ -14,10 +14,46 @@
         private readonly VolatileCollection<BrVector3> verts;
         private readonly VolatileCollection<TriangleUnks> unks;
 
-        public IList<int> Triangles { get => RequireLoad(() => triangles); }
-        public IList<BrVector2> TextureCoordinates { get => RequireLoad(() => texCoords); }
-        public IList<BrVector3> Vertices { get => RequireLoad(() => verts); }
-        public IList<TriangleUnks> TriangleUnks { get => RequireLoad(() => unks); }
+        public IList<int> Triangles
+        {
+            get
+            {
+                using (Lock())
+                {
+                    return triangles;
+                }
+            }
+        }
+        public IList<BrVector2> TextureCoordinates
+        {
+            get
+            {
+                using (Lock())
+                {
+                    return texCoords;
+                }
+            }
+        }
+        public IList<BrVector3> Vertices
+        {
+            get
+            {
+                using (Lock())
+                {
+                    return verts;
+                }
+            }
+        }
+        public IList<TriangleUnks> TriangleUnks
+        {
+            get
+            {
+                using (Lock())
+                {
+                    return unks;
+                }
+            }
+        }
 
         public BMDL()
         {
@@ -29,7 +65,7 @@
 
         protected override void Read(IDataReadContext c)
         {
-            MagicNumber = c.AssertAny(Ms3dmm.MAGIC_NUM_US, Ms3dmm.MAGIC_NUM_JP);
+            MagicNumber = c.Read<uint>();
             var vertcount = c.Read<UInt16>();
             var tricount = c.Read<UInt16>();
             c.Position = 48;
@@ -41,7 +77,7 @@
             for (int k = 0;k < vertcount;k++)
             {
                 Vertices.Add(c.Read<BrVector3>());
-                var uv = new BrVector2(c.Read<Int32>(), c.Read<Int32>());
+                var uv = c.Read<BrVector2>();
                 uv.Y = 1 - uv.Y;
                 TextureCoordinates.Add(uv);
                 c.Position += 12;

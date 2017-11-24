@@ -34,7 +34,7 @@
 
         protected override void Read(IDataReadContext c)
         {
-            MagicNumber = c.AssertAny(Ms3dmm.MAGIC_NUM_US, Ms3dmm.MAGIC_NUM_JP);
+            MagicNumber = c.Read<uint>();
 
             if (c.Read<UInt32>() != 0 || c.Read<UInt32>() != 0xFFFF0000 || c.Read<UInt16>() != 0)
                 throw new InvalidDataException("MTRL header is invalid");

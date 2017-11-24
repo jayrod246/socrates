@@ -85,6 +85,9 @@
             const uint KCDC = (uint)CompressionType.KCDC;
             const uint KCD2 = (uint)CompressionType.KCD2;
 
+            if (buffer == default(void*))
+                return CompressionType.Uncompressed;
+
             switch (*(uint*)buffer)
             {
                 case KCDC:

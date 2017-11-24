@@ -2,7 +2,6 @@
 {
     using Meyer.Socrates.IO;
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel;
 
     [SectionKey("HTOP")]
@@ -38,19 +37,19 @@
             base.SetItem(index, item);
         }
 
-        protected override void Read(IDataReadContext c, IList<Chunk> items)
+        protected override void Read(IDataReadContext c)
         {
             while (c.Position < c.Length)
             {
                 var chunk = new Chunk();
                 chunk.ReadInternal(c);
-                items.Add(chunk);
+                Add(chunk);
             }
         }
 
-        protected override void Write(IDataWriteContext c, IList<Chunk> items)
+        protected override void Write(IDataWriteContext c)
         {
-            foreach (var item in items)
+            foreach (var item in this)
                 item.WriteInternal(c);
         }
 
@@ -127,7 +126,7 @@
 
             private void Read(IDataReadContext c)
             {
-                MagicNumber = c.AssertAny(Ms3dmm.MAGIC_NUM_US, Ms3dmm.MAGIC_NUM_JP);
+                MagicNumber = c.Read<uint>();
                 Quad = c.Read<Quad>();
                 Unk0 = c.Read<UInt32>();
                 var sectLength = c.Read<Int32>();

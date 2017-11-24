@@ -38,12 +38,15 @@
 
         public virtual byte[] GetPixelBuffer()
         {
-            return RequireLoad(() => pixels);
+            using (Lock())
+            {
+                return pixels;
+            }
         }
 
         void IBitmapCanvas.SetPixel(int x, int y, int value)
         {
-            RequireLoad(() => SetPixelCore(x, y, value));
+            using (Lock()) SetPixelCore(x, y, value);
         }
 
         protected virtual void SetPixelCore(int x, int y, int value)
@@ -93,7 +96,10 @@
 
         int IBitmapCanvas.GetPixel(int x, int y)
         {
-            return RequireLoad(() => GetPixelCore(x, y));
+            using (Lock())
+            {
+                return GetPixelCore(x, y);
+            }
         }
 
         protected virtual int GetPixelCore(int x, int y)
@@ -133,7 +139,7 @@
 
         public virtual void SetPixelBuffer(byte[] buffer)
         {
-            RequireLoad(() =>
+            using (Lock(true))
             {
                 if (buffer == null)
                     throw new ArgumentNullException("buffer");
@@ -142,13 +148,12 @@
                 Contract.EndContractBlock();
 
                 pixels = buffer;
-                ClearCache();
-            });
+            }
         }
 
         public virtual void CopyTo(IBitmapCanvas dest, int destX, int destY)
         {
-            RequireLoad(() =>
+            using (Lock())
             {
                 for (int y = destY;y < dest.Height;y++)
                 {
@@ -157,12 +162,12 @@
                         dest.SetPixel(x, y, ((IBitmapCanvas)this).GetPixel(x - destX, y - destY));
                     }
                 }
-            });
+            }
         }
 
         public void Clear(int fill)
         {
-            RequireLoad(() => ClearCore(fill));
+            using (Lock()) ClearCore(fill);
         }
 
         protected virtual void ClearCore(int fill)

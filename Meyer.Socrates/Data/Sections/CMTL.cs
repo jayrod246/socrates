@@ -19,7 +19,7 @@
 
         protected override void Read(IDataReadContext c)
         {
-            MagicNumber = c.AssertAny(Ms3dmm.MAGIC_NUM_US, Ms3dmm.MAGIC_NUM_JP);
+            MagicNumber = c.Read<uint>();
             BodySetID = c.Read<UInt32>();
         }
 

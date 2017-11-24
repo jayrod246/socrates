@@ -1,10 +1,9 @@
 ﻿namespace Meyer.Socrates.Data.Sections
 {
+    using Meyer.Socrates.Data;
     using Meyer.Socrates.Data.ActorEvents;
     using Meyer.Socrates.IO;
-    using Meyer.Socrates.Data;
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
 
@@ -30,9 +29,9 @@
             Attach(item);
         }
 
-        protected override void Read(IDataReadContext c, IList<ActorEvent> items)
+        protected override void Read(IDataReadContext c)
         {
-            MagicNumber = c.AssertAny(Ms3dmm.MAGIC_NUM_US, Ms3dmm.MAGIC_NUM_JP);
+            MagicNumber = c.Read<uint>();
             var count = c.Read<UInt32>();
             var topLen = c.Read<UInt32>();
             var directoryOffset = topLen + 20;
@@ -58,13 +57,13 @@
                 ae.PathUnits = c.Read<BrScalar>();
                 ae.Wait = c.Read<Int32>();
                 ae.Data = c.ReadArray<byte>((int)(lengths[i] - 20));
-                items.Add(ae);
+                Add(ae);
             }
         }
 
-        protected override void Write(IDataWriteContext c, IList<ActorEvent> items)
+        protected override void Write(IDataWriteContext c)
         {
-            var sorted = items.OrderBy(m => m.PathIndex).ThenBy(m => m.Begin).ToList();
+            var sorted = this.OrderBy(m => m.PathIndex).ThenBy(m => m.Begin).ToList();
             var offsets = new uint[sorted.Count];
             var lengths = new uint[sorted.Count];
             c.Position = 20;
@@ -85,7 +84,7 @@
             uint toplen = (uint)c.Length - 20;
 
             // Write offsets and lengths
-            for (int i = 0;i < items.Count;i++)
+            for (int i = 0;i < Count;i++)
             {
                 c.Write(offsets[i] - 20);
                 c.Write(lengths[i]);
@@ -94,7 +93,7 @@
             // Write header
             c.Position = 0;
             c.Write(MagicNumber);
-            c.Write((uint)items.Count);
+            c.Write((uint)Count);
             c.Write(toplen);
             c.Write(0xFFFFFFFF);
             c.Write(20);

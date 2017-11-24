@@ -5,13 +5,14 @@
     using Meyer.Socrates.Data.Sections;
     using Meyer.Socrates.Data.Volatile;
     using System.Collections.Generic;
+    using System.Linq;
 
-    public class Chunk: VolatileObject, IChunkIdentifier, IResolvable, IResolvable<Section>
+    public class Chunk: VolatileObject, IChunkIdentifier, IResolvable<Section>, ICloneable
     {
         public uint ID { get => GetValue(ref id); set => SetValue(ref id, value); }
         public Quad Quad { get => GetValue(ref quad); set => SetValue(ref quad, value); }
         public ReferenceCollection References { get; }
-        public IReadOnlyCollection<ReadOnlyReference> ReferencedBy { get; }
+        public IReadOnlyCollection<ReadOnlyReference> ReferencedBy => this.container?.GetReferencesTo(this) ?? Array.Empty<ReadOnlyReference>();
         public Section Section
         {
             get => GetValue(ref section);
@@ -68,13 +69,6 @@
         private string str;
         private bool forcesUnicode;
 
-        T IResolvable.Resolve<T>()
-        {
-            if (typeof(Section).IsAssignableFrom(typeof(T)))
-                return (T)(object)Section;
-            return default(T);
-        }
-
         Section IResolvable<Section>.Resolve()
         {
             return Section;
@@ -83,6 +77,28 @@
         ChunkIdentity IChunkIdentifier.GetChunkIdentity()
         {
             return new ChunkIdentity(Quad, ID);
+        }
+
+        public Chunk Clone()
+        {
+            var copy = new Chunk()
+            {
+                Quad = Quad,
+                ID = ID,
+                Mode = Mode,
+                String = String,
+                Section = Section.Clone(),
+                ForcesUnicode = ForcesUnicode
+            };
+
+            copy.References.AddRange(References.Select(r => r.Clone()));
+
+            return copy;
+        }
+
+        object ICloneable.Clone()
+        {
+            return Clone();
         }
     }
 }

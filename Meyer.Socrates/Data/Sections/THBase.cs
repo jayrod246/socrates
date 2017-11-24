@@ -41,7 +41,7 @@
 
         protected sealed override void Read(IDataReadContext c)
         {
-            MagicNumber = c.AssertAny(Ms3dmm.MAGIC_NUM_US, Ms3dmm.MAGIC_NUM_JP);
+            MagicNumber = c.Read<uint>();
             SourceReference = new SourceReference()
             {
                 Quad = c.Read<Quad>(),

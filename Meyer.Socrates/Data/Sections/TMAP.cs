@@ -33,25 +33,37 @@
 
         public byte this[int x, int y]
         {
-            get => RequireLoad(() => (byte)GetPixelCore(x, y));
-            set => RequireLoad(() => SetPixelCore(x, y, value));
+            get
+            {
+                using (Lock())
+                {
+                    return (byte)GetPixelCore(x, y);
+                }
+            }
+            set
+            {
+                using (Lock())
+                {
+                    SetPixelCore(x, y, value);
+                }
+            }
         }
 
         #endregion
 
         public void SetPixel(int x, int y, byte value)
         {
-            RequireLoad(() => SetPixelCore(x, y, value));
+            using (Lock()) SetPixelCore(x, y, value);
         }
 
         public void Clear(byte fill)
         {
-            RequireLoad(() => ClearCore(fill));
+            using (Lock()) ClearCore(fill);
         }
 
         protected override void Read(IDataReadContext c)
         {
-            MagicNumber = c.AssertAny(Ms3dmm.MAGIC_NUM_US, Ms3dmm.MAGIC_NUM_JP);
+            MagicNumber = c.Read<uint>();
             Width = c.Read<Int16>();
             Unk1 = c.AssertAny<Int16>(0x0203, 0x0003);
             Reserved1 = c.Read<Int32>();

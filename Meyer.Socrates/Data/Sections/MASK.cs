@@ -28,17 +28,17 @@
 
         public void SetPixel(int x, int y, bool value)
         {
-            RequireLoad(() => SetPixelCore(x, y, value ? 1 : 0));
+            using (Lock()) SetPixelCore(x, y, value ? 1 : 0);
         }
 
         public bool GetPixel(int x, int y)
         {
-            return RequireLoad(() => GetPixelCore(x, y) == 1);
+            using (Lock()) return GetPixelCore(x, y) == 1;
         }
 
         public void Clear(bool fill)
         {
-            RequireLoad(() =>
+            using(Lock(true))
             {
                 if (fill)
                 {
@@ -46,12 +46,12 @@
                         PixelBuffer[i] = 0xFF;
                 }
                 else Array.Clear(PixelBuffer, 0, PixelBuffer.Length);
-            });
+            };
         }
 
         protected override void Read(IDataReadContext c)
         {
-            MagicNumber = c.AssertAny(Ms3dmm.MAGIC_NUM_US, Ms3dmm.MAGIC_NUM_JP);
+            MagicNumber = c.Read<uint>();
             Unk = c.Read<Int32>();
             OffsetX = c.Read<Int32>();
             OffsetY = c.Read<Int32>();

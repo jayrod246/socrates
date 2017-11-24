@@ -47,8 +47,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\BrLightType.cs" />
+    <Compile Include="Data\BrMatrix2x3.cs" />
     <Compile Include="Data\ChunkIdentity.cs" />
+    <Compile Include="Data\InterpretType.cs" />
+    <Compile Include="Data\Matrix.cs" />
+    <Compile Include="Data\Sections\THBase.cs" />
     <Compile Include="Data\TriangleUnks.cs" />
+    <Compile Include="Data\VersionInfo.cs" />
     <Compile Include="IO\BitReader.cs" />
     <Compile Include="Data\BufferEx.cs" />
     <Compile Include="Collections\Generic\CollectionBase.cs" />
@@ -128,7 +134,6 @@
     <Compile Include="Data\Sections\Section.cs" />
     <Compile Include="Data\Sections\SectionKeyAttribute.cs" />
     <Compile Include="Data\Sections\SharedMBMP.cs" />
-    <Compile Include="Data\Sections\TH.cs" />
     <Compile Include="Data\Sections\THUM.cs" />
     <Compile Include="Data\Sections\TMAP.cs" />
     <Compile Include="Data\Sections\TMPL.cs" />

@@ -20,6 +20,7 @@
         #region Public properties
 
         public string FileName => Path.GetFileName(fileFullPath ?? "");
+        public string FileFullPath => fileFullPath ?? "";
         public Quad Identifier => defaultIdentifier;
         public Quad Signature { get; set; }
         public ushort Unk1 { get; set; }
@@ -191,6 +192,13 @@
             }
 
             progress.Report(new ProgressInfo(100));
+        }
+
+        public static Ms3dmmFile FromCollection(IEnumerable<Chunk> collection)
+        {
+            var file = new Ms3dmmFile();
+            file.AddRange(collection);
+            return file;
         }
 
         public static Ms3dmmFile Open(string filename, IProgress<ProgressInfo> progress = null)
