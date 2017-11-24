@@ -9,21 +9,20 @@ namespace Meyer.Socrates.Data
         public static readonly BrAngle MinValue = FromRaw(ushort.MinValue);
 
         public ushort RawValue { get; set; }
+        public float Value { get => AsSingle(); set => this = new BrAngle(value); }
 
         public BrAngle(float value)
         {
-            try
-            {
-                RawValue = checked((ushort)((value / 360f) * 65536f));
-            }
-            catch (OverflowException)
-            {
-                if (System.Math.Ceiling(value) != 32768f) throw;
-                this = MaxValue;
-            }
+            value %= 360f;
+            if (value < 0)
+                value += 360f;
+            RawValue = checked((ushort)((value / 360f) * 65536f));
         }
 
-        public float AsSingle(bool radians = false) => radians ? (BrScalar.PI / 180f) * BrScalar.FromRaw(RawValue) * 360f : BrScalar.FromRaw(RawValue) * 360f;
+        public float AsSingle(bool radians = false)
+        {
+            return radians ? (BrScalar.PI / 180f) * BrScalar.FromRaw(RawValue) * 360f : BrScalar.FromRaw(RawValue) * 360f;
+        }
 
         public static BrAngle FromRaw(ushort rawValue)
         {
@@ -35,9 +34,9 @@ namespace Meyer.Socrates.Data
             return new BrAngle(deg);
         }
 
-        public static BrAngle FromRadians(float deg)
+        public static BrAngle FromRadians(float rad)
         {
-            return new BrAngle((BrScalar.PI / 180f) * deg);
+            return new BrAngle((180f / BrScalar.PI) * rad);
         }
 
         public static implicit operator float(BrAngle x)
